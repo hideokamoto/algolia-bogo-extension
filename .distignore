@@ -40,3 +40,16 @@ node_modules
 *.sql
 *.tar.gz
 *.zip
+
+# Repository, CI, and local development files of this plugin
+.github
+.chunk
+.cursor
+.wp-env.json
+.wp-env.override.json
+.wp-now
+README-wp-now.md
+blueprint.json
+wp-now.json
+scripts
+coverage

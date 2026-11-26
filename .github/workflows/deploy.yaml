@@ -6,6 +6,8 @@ jobs:
   deploy:
     name: Deploy to WordPress.org
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -20,10 +22,12 @@ jobs:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SLUG: wp-search-with-algolia-bogo-extension
         
+    # The deploy action writes the zip as <SLUG>.zip and reports its path in the zip-path output,
+    # so the upload reads that output instead of building a file name from the repository name.
+    # The tag name and the path are passed through the environment, never expanded into the script.
     - name: Upload release asset
-      run: |
-        gh release upload "${{ github.event.release.tag_name }}" \
-          "${{ github.workspace }}/${{ github.event.repository.name }}.zip" \
-          --clobber
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        ZIP_PATH: ${{ steps.deploy.outputs.zip-path }}
+      run: gh release upload "$RELEASE_TAG" "$ZIP_PATH" --clobber
