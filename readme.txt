@@ -121,6 +121,9 @@ The generated POT file will be saved to `languages/algolia-bogo.pot`.
 
 == Changelog ==
 
+= 0.2.2 =
+* Declare the GPLv2 or later license in the plugin header, which WordPress.org's Plugin Check requires
+
 = 0.2.1 =
 * Update deploy workflow to use latest GitHub Actions
 * Replace deprecated actions with modern alternatives
@@ -138,6 +141,9 @@ The generated POT file will be saved to `languages/algolia-bogo.pot`.
 * Release
 
 == Upgrade Notice ==
+
+= 0.2.2 =
+* Adds the license to the plugin header. No functional changes.
 
 = 0.2.1 =
 * Maintenance release with updated deployment workflow. No functional changes.
