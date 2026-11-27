@@ -639,5 +639,58 @@ class Test_Algolia_Bogo extends WP_UnitTestCase {
 		// Default is 'searchable_posts' which is in allowed list
 		$this->assertContains( 'locale', $result['attributesForFaceting'], 'locale should be added with default post_type' );
 	}
-}
 
+	/**
+	 * Read a header field from the plugin's main file.
+	 *
+	 * WordPress core's get_plugin_data() does not return License or License URI,
+	 * so the fields are read with get_file_data() the same way Plugin Check does.
+	 *
+	 * @param string $header Header name as written in the file, e.g. "License".
+	 * @return string
+	 */
+	private function get_main_file_header( $header ) {
+		$data = get_file_data( dirname( __DIR__ ) . '/algolia-bogo.php', array( 'value' => $header ) );
+		return $data['value'];
+	}
+
+	/**
+	 * Read a header field from readme.txt.
+	 *
+	 * @param string $header Header name as written in readme.txt, e.g. "License".
+	 * @return string
+	 */
+	private function get_readme_header( $header ) {
+		$data = get_file_data( dirname( __DIR__ ) . '/readme.txt', array( 'value' => $header ) );
+		return $data['value'];
+	}
+
+	/**
+	 * Test that the plugin's main file declares a GPL-compatible license.
+	 *
+	 * WordPress.org's Plugin Check reports a missing "License" in the plugin header
+	 * as an error (plugin_header_no_license), so the main file must carry it, not
+	 * only readme.txt.
+	 *
+	 * @since 0.2.2
+	 */
+	public function test_main_file_declares_license() {
+		$license = $this->get_main_file_header( 'License' );
+
+		$this->assertNotEmpty( $license, 'algolia-bogo.php should have a License header' );
+		$this->assertMatchesRegularExpression( '/GPL/', $license, 'License header should be GPL compatible' );
+		$this->assertNotEmpty( $this->get_main_file_header( 'License URI' ), 'algolia-bogo.php should have a License URI header' );
+	}
+
+	/**
+	 * Test that the license in the main file and in readme.txt are the same.
+	 *
+	 * Plugin Check warns when the two disagree (license_mismatch).
+	 *
+	 * @since 0.2.2
+	 */
+	public function test_main_file_license_matches_readme() {
+		$this->assertSame( $this->get_readme_header( 'License' ), $this->get_main_file_header( 'License' ) );
+		$this->assertSame( $this->get_readme_header( 'License URI' ), $this->get_main_file_header( 'License URI' ) );
+	}
+}
